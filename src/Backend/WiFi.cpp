@@ -337,7 +337,10 @@ namespace
             }
         }
 
+        // Strongest first (by name when equally strong)
         std::sort(s.networks.begin(), s.networks.end(), [](const auto &a, const auto &b) {
+            if (a.strength != b.strength)
+                return a.strength > b.strength;
             const auto lower = [](std::string x){ std::transform(x.begin(), x.end(), x.begin(), ::tolower); return x; };
             return lower(a.ssid) < lower(b.ssid);
         });

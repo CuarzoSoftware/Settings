@@ -1,5 +1,7 @@
 #include <Window/SettingsWindow.h>
 #include <Panes/WiFiPane.h>
+#include <Panes/DisplaysPane.h>
+#include <Panes/SoundPane.h>
 #include <Panes/PlaceholderPane.h>
 #include <CZ/AK/AKTheme.h>
 #include <CZ/Core/CZTimer.h>
@@ -65,6 +67,10 @@ Pane *SettingsWindow::pane(const std::string &id) noexcept
 
     if (id == "wifi")
         pane = std::make_unique<WiFiPane>();
+    else if (id == "displays")
+        pane = std::make_unique<DisplaysPane>();
+    else if (id == "sound")
+        pane = std::make_unique<SoundPane>();
     else if (AKSidebarItem *item { sidebar.list.item(id) })
         pane = std::make_unique<PlaceholderPane>(id, item->label.text(), item->tile.icon.icon(), item->tileColor());
     else

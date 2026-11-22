@@ -236,6 +236,7 @@ void WiFiPane::askPassword(const WiFiNetwork &network, bool wrong) noexcept
 
     m_password = std::make_unique<AKTextInput>("Password", &dialog->content);
     m_password->setPasswordMode(true);
+    m_password->setShowsVisibilityToggle(true);
     MDialog *raw { dialog.get() };
 
     dialog->addButton("Cancel", MDialog::Role::Cancel);
