@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=System Settings
+Comment=Configure Cuarzo OS
+Exec=cz-settings
+Icon=preferences-system
+Categories=Settings;System;
+StartupNotify=true
