@@ -15,6 +15,7 @@ SettingsWindow::SettingsWindow() noexcept
     setTitle("System Settings");
     setColor(CZAdaptiveColor(0)); // Transparent: the sidebar shows the background blur
     layout().setFlexDirection(YGFlexDirectionRow);
+    sidebar.setWidth(SidebarWidth);
     layout().setWidth(DefaultWidth);
     layout().setHeight(DefaultHeight);
     setMinSize(SkISize::Make(Int32(sidebar.minWidth()) + MinPaneWidth, MinHeight));

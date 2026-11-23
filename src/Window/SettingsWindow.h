@@ -27,8 +27,9 @@ class SettingsWindow final : public CZ::MToplevel
 public:
     SettingsWindow() noexcept;
 
-    static constexpr CZ::Int32 DefaultWidth    { 715 };
-    static constexpr CZ::Int32 DefaultHeight   { 640 };
+    static constexpr CZ::Int32 DefaultWidth    { 840 };
+    static constexpr CZ::Int32 DefaultHeight   { 700 };
+    static constexpr CZ::Int32 SidebarWidth    { 270 }; // Default (the user can resize it)
     static constexpr CZ::Int32 MinPaneWidth    { 480 };
     static constexpr CZ::Int32 MinHeight       { 400 };
     static constexpr SkScalar  PanePadding     { 20.f };
