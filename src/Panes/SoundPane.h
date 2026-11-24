@@ -3,7 +3,7 @@
 
 #include <Panes/Pane.h>
 #include <Backend/AlertSettings.h>
-#include <CZ/Services/SAudio.h>
+#include <CZ/Services/SVAudio.h>
 #include <CZ/AK/Nodes/AKFormSection.h>
 #include <CZ/AK/Nodes/AKFormRow.h>
 #include <CZ/AK/Nodes/AKIconButton.h>
@@ -26,7 +26,7 @@ class DeviceRow final : public CZ::AKSolidColor
 public:
     DeviceRow(SoundPane &pane, CZ::AKNode *parent) noexcept;
 
-    void set(const CZ::SAudioDevice &device, bool selected) noexcept;
+    void set(const CZ::SVAudioDevice &device, bool selected) noexcept;
 
     std::string device; // Its name
     CZ::AKText name { "", this };
@@ -68,7 +68,7 @@ public:
     /// The table's row of @p device was clicked.
     void deviceClicked(const std::string &device) noexcept;
 
-    std::shared_ptr<CZ::SAudio> sound { CZ::SAudio::GetOrMake() };
+    std::shared_ptr<CZ::SVAudio> sound { CZ::SVAudio::GetOrMake() };
 
     // Alerts and sound effects (played by Crystals)
     CZ::AKFormSection alerts { "", this };

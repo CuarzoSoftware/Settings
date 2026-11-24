@@ -35,7 +35,7 @@ NetworkRow::NetworkRow(WiFiPane &pane, bool known, AKNode *parent) noexcept :
     updateIconColors();
 }
 
-void NetworkRow::set(const SWiFiNetwork &n, bool active) noexcept
+void NetworkRow::set(const SVWiFiNetwork &n, bool active) noexcept
 {
     network = n;
     title.setText(n.ssid);
@@ -142,7 +142,7 @@ void WiFiPane::paneHidden() noexcept
 
 void WiFiPane::update() noexcept
 {
-    const SWiFiState &s { wifi->state() };
+    const SVWiFiState &s { wifi->state() };
     const bool on { s.available && s.enabled };
 
     toggle.setOn(on);
@@ -153,12 +153,12 @@ void WiFiPane::update() noexcept
     messageRow.title.setText(!s.available ? "No Wi-Fi hardware was found." : "Wi-Fi is turned off.");
 
     // The network it's connected (or connecting) to
-    const SWiFiNetwork *active { on ? s.active() : nullptr };
+    const SVWiFiNetwork *active { on ? s.active() : nullptr };
     currentRow.setVisible(active != nullptr);
 
     if (active)
     {
-        const bool connected { s.link == SWiFiState::Link::Connected };
+        const bool connected { s.link == SVWiFiState::Link::Connected };
         currentRow.title.setText(active->ssid);
         statusText.setText(connected ? "Connected" : "Connecting…");
         statusDot.setBackgroundColor((connected ? AKTheme::SystemGreen : AKTheme::SystemOrange).resolve(colorScheme()));
@@ -167,7 +167,7 @@ void WiFiPane::update() noexcept
     }
 
     // Known networks in range (the one connected to with a check mark), then the others
-    std::vector<const SWiFiNetwork*> knownNets, otherNets;
+    std::vector<const SVWiFiNetwork*> knownNets, otherNets;
 
     if (on)
         for (const auto &n : s.networks)
@@ -189,7 +189,7 @@ void WiFiPane::update() noexcept
 }
 
 void WiFiPane::syncRows(AKFormSection &section, std::vector<std::unique_ptr<NetworkRow>> &rows,
-                        const std::vector<const SWiFiNetwork*> &networks, bool isKnown) noexcept
+                        const std::vector<const SVWiFiNetwork*> &networks, bool isKnown) noexcept
 {
     // Reused in place (no flicker while signal strengths change)
     while (rows.size() > networks.size())
@@ -198,7 +198,7 @@ void WiFiPane::syncRows(AKFormSection &section, std::vector<std::unique_ptr<Netw
     while (rows.size() < networks.size())
         rows.emplace_back(std::make_unique<NetworkRow>(*this, isKnown, &section.card));
 
-    const SWiFiState &s { wifi->state() };
+    const SVWiFiState &s { wifi->state() };
 
     for (size_t i = 0; i < networks.size(); i++)
         rows[i]->set(*networks[i], networks[i]->ssid == s.activeSsid);
@@ -206,7 +206,7 @@ void WiFiPane::syncRows(AKFormSection &section, std::vector<std::unique_ptr<Netw
     section.updateSeparators();
 }
 
-void WiFiPane::join(const SWiFiNetwork &network) noexcept
+void WiFiPane::join(const SVWiFiNetwork &network) noexcept
 {
     if (network.ssid == wifi->state().activeSsid)
         return;
@@ -227,7 +227,7 @@ void WiFiPane::join(const SWiFiNetwork &network) noexcept
         wifi->join(network);
 }
 
-void WiFiPane::askPassword(const SWiFiNetwork &network, bool wrong) noexcept
+void WiFiPane::askPassword(const SVWiFiNetwork &network, bool wrong) noexcept
 {
     auto dialog { std::make_unique<MDialog>(
         "The Wi-Fi network \"" + network.ssid + "\" requires a " + (network.sae ? "WPA3" : "WPA2") + " password.",
@@ -263,7 +263,7 @@ void WiFiPane::askPassword(const SWiFiNetwork &network, bool wrong) noexcept
     openDialog(std::move(dialog));
 }
 
-void WiFiPane::openMenu(const SWiFiNetwork &network, AKNode &anchor, const CZPointerButtonEvent &event) noexcept
+void WiFiPane::openMenu(const SVWiFiNetwork &network, AKNode &anchor, const CZPointerButtonEvent &event) noexcept
 {
     m_menu.clear();
     m_menu.addAction("Auto-Join", [this, network]{ wifi->setAutoJoin(network, !network.autoJoin); }).setChecked(network.autoJoin);
@@ -272,7 +272,7 @@ void WiFiPane::openMenu(const SWiFiNetwork &network, AKNode &anchor, const CZPoi
     m_menu.popup(anchor, &event);
 }
 
-void WiFiPane::confirmForget(const SWiFiNetwork &network) noexcept
+void WiFiPane::confirmForget(const SVWiFiNetwork &network) noexcept
 {
     auto dialog { std::make_unique<MDialog>("Forget Wi-Fi network \"" + network.ssid + "\"?",
         "This computer will no longer join this Wi-Fi network automatically.") };
@@ -287,8 +287,8 @@ void WiFiPane::confirmForget(const SWiFiNetwork &network) noexcept
 
 void WiFiPane::showDetails() noexcept
 {
-    const SWiFiState &s { wifi->state() };
-    const SWiFiNetwork *active { s.active() };
+    const SVWiFiState &s { wifi->state() };
+    const SVWiFiNetwork *active { s.active() };
 
     if (!active)
         return;
@@ -310,7 +310,7 @@ void WiFiPane::showDetails() noexcept
         v.setSelectable(!value.empty());
     };
 
-    row("Status", s.link == SWiFiState::Link::Connected ? "Connected" : "Connecting…");
+    row("Status", s.link == SVWiFiState::Link::Connected ? "Connected" : "Connecting…");
     row("Signal", std::to_string(active->strength) + " %");
     row("Security", active->securityName());
     row("IP Address", s.ipAddress);
@@ -318,7 +318,7 @@ void WiFiPane::showDetails() noexcept
     row("Hardware Address", s.hwAddress);
     section.updateSeparators();
 
-    const SWiFiNetwork network { *active };
+    const SVWiFiNetwork network { *active };
 
     if (network.known())
         dialog->addButton("Forget This Network…", MDialog::Role::Normal, [this, network]{

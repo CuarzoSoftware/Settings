@@ -35,7 +35,7 @@ DeviceRow::DeviceRow(SoundPane &pane, AKNode *parent) noexcept :
     updateColors();
 }
 
-void DeviceRow::set(const SAudioDevice &d, bool selected) noexcept
+void DeviceRow::set(const SVAudioDevice &d, bool selected) noexcept
 {
     device = d.name;
     name.setText(d.displayName);
@@ -234,7 +234,7 @@ void SoundPane::update() noexcept
     updateTable();
 
     // The selected device's volume
-    const SAudioSelection &sel { input ? s.input : s.output };
+    const SVAudioSelection &sel { input ? s.input : s.output };
     const bool selected { sel.valid && sel.volume >= 0.f };
     volumeRow.title.setText(input ? "Input volume" : "Output volume");
     volumeRow.setVisible(true);

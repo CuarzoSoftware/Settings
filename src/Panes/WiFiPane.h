@@ -2,7 +2,7 @@
 #define WIFIPANE_H
 
 #include <Panes/Pane.h>
-#include <CZ/Services/SWiFi.h>
+#include <CZ/Services/SVWiFi.h>
 #include <CZ/AK/Nodes/AKFormSection.h>
 #include <CZ/AK/Nodes/AKFormRow.h>
 #include <CZ/AK/Nodes/AKIconTile.h>
@@ -30,9 +30,9 @@ class NetworkRow final : public CZ::AKFormRow
 public:
     NetworkRow(WiFiPane &pane, bool known, CZ::AKNode *parent) noexcept;
 
-    void set(const CZ::SWiFiNetwork &network, bool active) noexcept;
+    void set(const CZ::SVWiFiNetwork &network, bool active) noexcept;
 
-    CZ::SWiFiNetwork network;
+    CZ::SVWiFiNetwork network;
     CZ::AKFontIcon check { "check", 15, &leading };   // Known: the one connected to
     CZ::AKFontIcon lock { "lock", 14, &trailing };
     CZ::AKWiFiIcon signal { 100, 17, &trailing };
@@ -57,15 +57,15 @@ public:
     void paneHidden() noexcept override;
 
     /// Joins @p network (asking for its password if needed).
-    void join(const CZ::SWiFiNetwork &network) noexcept;
+    void join(const CZ::SVWiFiNetwork &network) noexcept;
 
     /// Its menu (Auto-Join, Forget...), under @p anchor.
-    void openMenu(const CZ::SWiFiNetwork &network, CZ::AKNode &anchor, const CZ::CZPointerButtonEvent &event) noexcept;
+    void openMenu(const CZ::SVWiFiNetwork &network, CZ::AKNode &anchor, const CZ::CZPointerButtonEvent &event) noexcept;
 
     void showDetails() noexcept;
-    void confirmForget(const CZ::SWiFiNetwork &network) noexcept;
+    void confirmForget(const CZ::SVWiFiNetwork &network) noexcept;
 
-    std::shared_ptr<CZ::SWiFi> wifi { CZ::SWiFi::GetOrMake() };
+    std::shared_ptr<CZ::SVWiFi> wifi { CZ::SVWiFi::GetOrMake() };
 
     // Wi-Fi on/off, and the network it's connected to
     CZ::AKFormSection main { "", this };
@@ -99,8 +99,8 @@ protected:
 private:
     void update() noexcept;
     void syncRows(CZ::AKFormSection &section, std::vector<std::unique_ptr<NetworkRow>> &rows,
-                  const std::vector<const CZ::SWiFiNetwork*> &networks, bool known) noexcept;
-    void askPassword(const CZ::SWiFiNetwork &network, bool wrong) noexcept;
+                  const std::vector<const CZ::SVWiFiNetwork*> &networks, bool known) noexcept;
+    void askPassword(const CZ::SVWiFiNetwork &network, bool wrong) noexcept;
     void openDialog(std::unique_ptr<CZ::MDialog> dialog) noexcept;
     void updateColors() noexcept;
 
