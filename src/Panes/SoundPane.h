@@ -68,7 +68,7 @@ public:
     /// The table's row of @p device was clicked.
     void deviceClicked(const std::string &device) noexcept;
 
-    CZ::SAudio sound;
+    std::shared_ptr<CZ::SAudio> sound { CZ::SAudio::GetOrMake() };
 
     // Alerts and sound effects (played by Crystals)
     CZ::AKFormSection alerts { "", this };

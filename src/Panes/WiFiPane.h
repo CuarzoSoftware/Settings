@@ -65,7 +65,7 @@ public:
     void showDetails() noexcept;
     void confirmForget(const CZ::SWiFiNetwork &network) noexcept;
 
-    CZ::SWiFi wifi;
+    std::shared_ptr<CZ::SWiFi> wifi { CZ::SWiFi::GetOrMake() };
 
     // Wi-Fi on/off, and the network it's connected to
     CZ::AKFormSection main { "", this };

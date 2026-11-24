@@ -181,19 +181,19 @@ SoundPane::SoundPane() noexcept : Pane("sound", "Sound")
 
     // The selected device's volume (and mute or level)
     volume.slider.onValueChanged.subscribe(this, [this](SkScalar v){
-        sound.setVolume(inputTab(), v);
+        sound->setVolume(inputTab(), v);
     });
 
     mute.onToggled.subscribe(this, [this](bool on){
-        sound.setMuted(false, on);
+        sound->setMuted(false, on);
     });
 
-    sound.onChanged.subscribe(this, [this]{
+    sound->onChanged.subscribe(this, [this]{
         update();
         updateLevelMeter();
     });
 
-    sound.onInputLevel.subscribe(this, [this](float v){ level.setValue(v); });
+    sound->onInputLevel.subscribe(this, [this](float v){ level.setValue(v); });
 
     unavailable.setFontSize(13.f);
     unavailable.setVisible(false);
@@ -216,12 +216,12 @@ void SoundPane::paneHidden() noexcept
 
 void SoundPane::deviceClicked(const std::string &device) noexcept
 {
-    sound.select(inputTab(), device);
+    sound->select(inputTab(), device);
 }
 
 void SoundPane::update() noexcept
 {
-    const auto &s { sound.state() };
+    const auto &s { sound->state() };
     const bool input { inputTab() };
     const bool available { !s.loaded || s.available };
 
@@ -250,7 +250,7 @@ void SoundPane::update() noexcept
 
 void SoundPane::updateAlertDevices() noexcept
 {
-    const auto &s { sound.state() };
+    const auto &s { sound->state() };
     std::vector<std::string> items { "Selected Sound Output Device" };
     m_alertDeviceItems = { "" };
     size_t selected { 0 };
@@ -277,7 +277,7 @@ void SoundPane::updateAlertDevices() noexcept
 
 void SoundPane::updateTable() noexcept
 {
-    const auto &s { sound.state() };
+    const auto &s { sound->state() };
     const bool input { inputTab() };
     const auto &list { input ? s.inputs : s.outputs };
     const std::string &selected { input ? s.input.device : s.output.device };
@@ -297,7 +297,7 @@ void SoundPane::updateTable() noexcept
 
 void SoundPane::updateLevelMeter() noexcept
 {
-    const auto &s { sound.state() };
+    const auto &s { sound->state() };
     const std::string device { m_shown && inputTab() && s.input.valid ? s.input.node : "" };
 
     if (device == m_levelDevice)
@@ -307,9 +307,9 @@ void SoundPane::updateLevelMeter() noexcept
     level.setValue(0.f);
 
     if (device.empty())
-        sound.stopInputLevel();
+        sound->stopInputLevel();
     else
-        sound.startInputLevel(device);
+        sound->startInputLevel(device);
 }
 
 void SoundPane::saveAlerts() noexcept
@@ -319,7 +319,7 @@ void SoundPane::saveAlerts() noexcept
 
 void SoundPane::playAlertSound() noexcept
 {
-    sound.play(AlertSettings::SoundPath(m_alerts.sound), m_alerts.device, m_alerts.volume);
+    sound->play(AlertSettings::SoundPath(m_alerts.sound), m_alerts.device, m_alerts.volume);
 }
 
 void SoundPane::colorSchemeEvent(const CZColorSchemeEvent &e)

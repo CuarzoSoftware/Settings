@@ -64,7 +64,7 @@ WiFiPane::WiFiPane() noexcept : Pane("wifi", "Wi-Fi")
 {
     const SkRegion empty;
 
-    toggle.onToggled.subscribe(this, [this](bool on){ wifi.setEnabled(on); });
+    toggle.onToggled.subscribe(this, [this](bool on){ wifi->setEnabled(on); });
 
     // The network it's connected to: its name, status (and a warning if it's open)
     currentRow.title.setFontSize(13.f);
@@ -96,9 +96,9 @@ WiFiPane::WiFiPane() noexcept : Pane("wifi", "Wi-Fi")
     searchingText.setFontSize(13.f);
     searchingText.setTextColor(AKTheme::SecondaryLabel);
 
-    wifi.onChanged.subscribe(this, [this]{ update(); });
-    wifi.onJoinFailed.subscribe(this, [this](const std::string &ssid, bool wrongPassword){
-        for (const auto &n : wifi.state().networks)
+    wifi->onChanged.subscribe(this, [this]{ update(); });
+    wifi->onJoinFailed.subscribe(this, [this](const std::string &ssid, bool wrongPassword){
+        for (const auto &n : wifi->state().networks)
         {
             if (n.ssid != ssid)
                 continue;
@@ -108,7 +108,7 @@ WiFiPane::WiFiPane() noexcept : Pane("wifi", "Wi-Fi")
 
             // A saved password that no longer works: asked again (and saved as a new profile)
             if (n.known())
-                wifi.forget(n);
+                wifi->forget(n);
 
             askPassword(n, true);
             return;
@@ -121,7 +121,7 @@ WiFiPane::WiFiPane() noexcept : Pane("wifi", "Wi-Fi")
     });
 
     m_scanTimer.setCallback([this](CZTimer *){
-        wifi.scan();
+        wifi->scan();
         m_scanTimer.start(ScanIntervalMs);
     });
 
@@ -131,7 +131,7 @@ WiFiPane::WiFiPane() noexcept : Pane("wifi", "Wi-Fi")
 
 void WiFiPane::paneShown() noexcept
 {
-    wifi.scan();
+    wifi->scan();
     m_scanTimer.start(ScanIntervalMs);
 }
 
@@ -142,7 +142,7 @@ void WiFiPane::paneHidden() noexcept
 
 void WiFiPane::update() noexcept
 {
-    const SWiFiState &s { wifi.state() };
+    const SWiFiState &s { wifi->state() };
     const bool on { s.available && s.enabled };
 
     toggle.setOn(on);
@@ -174,7 +174,7 @@ void WiFiPane::update() noexcept
             (n.known() ? knownNets : otherNets).push_back(&n);
 
     // Spinning only while shown
-    const bool isSearching { wifi.searching() };
+    const bool isSearching { wifi->searching() };
     searching.setVisible(isSearching);
 
     if (isSearching)
@@ -198,7 +198,7 @@ void WiFiPane::syncRows(AKFormSection &section, std::vector<std::unique_ptr<Netw
     while (rows.size() < networks.size())
         rows.emplace_back(std::make_unique<NetworkRow>(*this, isKnown, &section.card));
 
-    const SWiFiState &s { wifi.state() };
+    const SWiFiState &s { wifi->state() };
 
     for (size_t i = 0; i < networks.size(); i++)
         rows[i]->set(*networks[i], networks[i]->ssid == s.activeSsid);
@@ -208,7 +208,7 @@ void WiFiPane::syncRows(AKFormSection &section, std::vector<std::unique_ptr<Netw
 
 void WiFiPane::join(const SWiFiNetwork &network) noexcept
 {
-    if (network.ssid == wifi.state().activeSsid)
+    if (network.ssid == wifi->state().activeSsid)
         return;
 
     if (network.enterprise || network.wep)
@@ -224,7 +224,7 @@ void WiFiPane::join(const SWiFiNetwork &network) noexcept
     if (network.secured && !network.known())
         askPassword(network, false);
     else
-        wifi.join(network);
+        wifi->join(network);
 }
 
 void WiFiPane::askPassword(const SWiFiNetwork &network, bool wrong) noexcept
@@ -245,7 +245,7 @@ void WiFiPane::askPassword(const SWiFiNetwork &network, bool wrong) noexcept
         if (m_password->text().size() < 8)
             return false;
 
-        wifi.join(network, m_password->text());
+        wifi->join(network, m_password->text());
         return true;
     }) };
 
@@ -266,7 +266,7 @@ void WiFiPane::askPassword(const SWiFiNetwork &network, bool wrong) noexcept
 void WiFiPane::openMenu(const SWiFiNetwork &network, AKNode &anchor, const CZPointerButtonEvent &event) noexcept
 {
     m_menu.clear();
-    m_menu.addAction("Auto-Join", [this, network]{ wifi.setAutoJoin(network, !network.autoJoin); }).setChecked(network.autoJoin);
+    m_menu.addAction("Auto-Join", [this, network]{ wifi->setAutoJoin(network, !network.autoJoin); }).setChecked(network.autoJoin);
     m_menu.addDivider();
     m_menu.addAction("Forget This Network…", [this, network]{ confirmForget(network); });
     m_menu.popup(anchor, &event);
@@ -279,7 +279,7 @@ void WiFiPane::confirmForget(const SWiFiNetwork &network) noexcept
     dialog->setIcon("wifi", AKTheme::SystemBlue);
     dialog->addButton("Cancel", MDialog::Role::Cancel);
     dialog->addButton("Forget", MDialog::Role::Default, [this, network]{
-        wifi.forget(network);
+        wifi->forget(network);
         return true;
     });
     openDialog(std::move(dialog));
@@ -287,7 +287,7 @@ void WiFiPane::confirmForget(const SWiFiNetwork &network) noexcept
 
 void WiFiPane::showDetails() noexcept
 {
-    const SWiFiState &s { wifi.state() };
+    const SWiFiState &s { wifi->state() };
     const SWiFiNetwork *active { s.active() };
 
     if (!active)
