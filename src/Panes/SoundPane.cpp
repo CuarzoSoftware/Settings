@@ -35,7 +35,7 @@ DeviceRow::DeviceRow(SoundPane &pane, AKNode *parent) noexcept :
     updateColors();
 }
 
-void DeviceRow::set(const AudioDevice &d, bool selected) noexcept
+void DeviceRow::set(const SAudioDevice &d, bool selected) noexcept
 {
     device = d.name;
     name.setText(d.displayName);
@@ -105,11 +105,11 @@ SoundPane::SoundPane() noexcept : Pane("sound", "Sound")
         std::vector<std::string> names;
         size_t selected { 0 };
 
-        for (size_t i = 0; i < Sound::AlertSounds().size(); i++)
+        for (size_t i = 0; i < AlertSettings::Sounds().size(); i++)
         {
-            names.push_back(Sound::AlertSounds()[i].name);
+            names.push_back(AlertSettings::Sounds()[i].name);
 
-            if (Sound::AlertSounds()[i].id == m_alerts.sound)
+            if (AlertSettings::Sounds()[i].id == m_alerts.sound)
                 selected = i;
         }
 
@@ -119,7 +119,7 @@ SoundPane::SoundPane() noexcept : Pane("sound", "Sound")
     }
 
     alertSound.onSelected.subscribe(this, [this](size_t i){
-        m_alerts.sound = Sound::AlertSounds()[i].id;
+        m_alerts.sound = AlertSettings::Sounds()[i].id;
         saveAlerts();
         playAlertSound();
     });
@@ -181,18 +181,11 @@ SoundPane::SoundPane() noexcept : Pane("sound", "Sound")
 
     // The selected device's volume (and mute or level)
     volume.slider.onValueChanged.subscribe(this, [this](SkScalar v){
-        const auto &s { sound.state() };
-        const std::string &device { inputTab() ? s.defaultInput : s.defaultOutput };
-
-        if (!device.empty())
-            sound.setVolume(inputTab(), device, v);
+        sound.setVolume(inputTab(), v);
     });
 
     mute.onToggled.subscribe(this, [this](bool on){
-        const std::string &device { sound.state().defaultOutput };
-
-        if (!device.empty())
-            sound.setMuted(false, device, on);
+        sound.setMuted(false, on);
     });
 
     sound.onChanged.subscribe(this, [this]{
@@ -223,7 +216,7 @@ void SoundPane::paneHidden() noexcept
 
 void SoundPane::deviceClicked(const std::string &device) noexcept
 {
-    sound.setDefault(inputTab(), device);
+    sound.select(inputTab(), device);
 }
 
 void SoundPane::update() noexcept
@@ -241,15 +234,16 @@ void SoundPane::update() noexcept
     updateTable();
 
     // The selected device's volume
-    const AudioDevice *device { input ? s.input(s.defaultInput) : s.output(s.defaultOutput) };
+    const SAudioSelection &sel { input ? s.input : s.output };
+    const bool selected { sel.valid && sel.volume >= 0.f };
     volumeRow.title.setText(input ? "Input volume" : "Output volume");
     volumeRow.setVisible(true);
-    volume.slider.setValue(device ? std::min(device->volume, 1.f) : 0.f);
+    volume.slider.setValue(selected ? std::min(sel.volume, 1.f) : 0.f);
     muteRow.setVisible(!input);
-    mute.setEnabled(device != nullptr);
+    mute.setEnabled(selected);
 
-    if (!input && device && mute.on() != device->muted)
-        mute.setOn(device->muted);
+    if (!input && selected && mute.on() != sel.muted)
+        mute.setOn(sel.muted);
 
     levelRow.setVisible(input);
 }
@@ -286,7 +280,7 @@ void SoundPane::updateTable() noexcept
     const auto &s { sound.state() };
     const bool input { inputTab() };
     const auto &list { input ? s.inputs : s.outputs };
-    const std::string &selected { input ? s.defaultInput : s.defaultOutput };
+    const std::string &selected { input ? s.input.device : s.output.device };
 
     while (m_rows.size() > list.size())
         m_rows.pop_back();
@@ -304,7 +298,7 @@ void SoundPane::updateTable() noexcept
 void SoundPane::updateLevelMeter() noexcept
 {
     const auto &s { sound.state() };
-    const std::string device { m_shown && inputTab() && s.input(s.defaultInput) ? s.defaultInput : "" };
+    const std::string device { m_shown && inputTab() && s.input.valid ? s.input.node : "" };
 
     if (device == m_levelDevice)
         return;
@@ -325,7 +319,7 @@ void SoundPane::saveAlerts() noexcept
 
 void SoundPane::playAlertSound() noexcept
 {
-    sound.play(Sound::AlertSoundPath(m_alerts.sound), m_alerts.device, m_alerts.volume);
+    sound.play(AlertSettings::SoundPath(m_alerts.sound), m_alerts.device, m_alerts.volume);
 }
 
 void SoundPane::colorSchemeEvent(const CZColorSchemeEvent &e)

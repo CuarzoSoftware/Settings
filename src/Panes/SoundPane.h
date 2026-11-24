@@ -2,7 +2,8 @@
 #define SOUNDPANE_H
 
 #include <Panes/Pane.h>
-#include <Backend/Sound.h>
+#include <Backend/AlertSettings.h>
+#include <CZ/Services/SAudio.h>
 #include <CZ/AK/Nodes/AKFormSection.h>
 #include <CZ/AK/Nodes/AKFormRow.h>
 #include <CZ/AK/Nodes/AKIconButton.h>
@@ -25,7 +26,7 @@ class DeviceRow final : public CZ::AKSolidColor
 public:
     DeviceRow(SoundPane &pane, CZ::AKNode *parent) noexcept;
 
-    void set(const AudioDevice &device, bool selected) noexcept;
+    void set(const CZ::SAudioDevice &device, bool selected) noexcept;
 
     std::string device; // Its name
     CZ::AKText name { "", this };
@@ -67,7 +68,7 @@ public:
     /// The table's row of @p device was clicked.
     void deviceClicked(const std::string &device) noexcept;
 
-    Sound sound;
+    CZ::SAudio sound;
 
     // Alerts and sound effects (played by Crystals)
     CZ::AKFormSection alerts { "", this };
