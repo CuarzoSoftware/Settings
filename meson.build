@@ -14,6 +14,7 @@ cz_skia_dep         = dependency('cz-skia', fallback:['cz-skia', 'cz_skia_dep'],
 cz_ream_dep         = dependency('cz-ream', fallback:['cz-ream', 'cz_ream_dep'])
 cz_kay_dep          = dependency('cz-kay', fallback:['cz-kay', 'cz_kay_dep'])
 cz_marco_dep        = dependency('cz-marco', fallback:['cz-marco', 'cz_marco_dep'])
+cz_services_dep     = dependency('cz-services', fallback:['cz-services', 'cz_services_dep'])
 systemd_dep         = dependency(['libsystemd', 'libelogind', 'basu'])
 
 executable(
@@ -26,6 +27,7 @@ executable(
         cz_ream_dep,
         cz_kay_dep,
         cz_marco_dep,
+        cz_services_dep,
         systemd_dep
     ],
     install : true)
