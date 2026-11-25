@@ -52,6 +52,11 @@ public:
         CZ::AKText title { "", &toolbar };
         CZ::AKScroll scroll { this };
         CZ::AKEdgeShadow separator { CZ::CZEdgeLeft, this }; // Over the sidebar's trailing edge
+
+        // Over the pane (added last), as tall as the toolbar: its shadow falls on the pane while
+        // it's scrolled under it
+        CZ::AKContainer toolbarShadowArea { YGFlexDirectionColumn, false, this };
+        CZ::AKEdgeShadow toolbarShadow { CZ::CZEdgeBottom, &toolbarShadowArea };
     } paneArea { this };
 
 private:

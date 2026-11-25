@@ -58,6 +58,15 @@ SettingsWindow::PaneArea::PaneArea(AKNode *parent) noexcept : AKSolidColor(AKThe
     scroll.slot()->layout().setPadding(YGEdgeTop, 6.f);
 
     separator.enableDiminishOpacityOnInactive(true);
+
+    toolbarShadowArea.setInputRegion(&empty);
+    toolbarShadowArea.layout().setPositionType(YGPositionTypeAbsolute);
+    toolbarShadowArea.layout().setPosition(YGEdgeTop, 0.f);
+    toolbarShadowArea.layout().setPosition(YGEdgeLeft, 0.f);
+    toolbarShadowArea.layout().setWidthPercent(100.f);
+    toolbarShadowArea.layout().setHeight(MSidebar::HeaderHeight);
+    toolbarShadow.setStrength(0.6f);
+    toolbarShadow.showWhileScrolled(&scroll);
 }
 
 Pane *SettingsWindow::pane(const std::string &id) noexcept

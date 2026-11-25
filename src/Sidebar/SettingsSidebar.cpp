@@ -10,6 +10,16 @@ SettingsSidebar::SettingsSidebar(AKNode *parent) noexcept : MSidebar(parent)
 
     list.layout().setFlex(1.f);
 
+    const SkRegion empty;
+    searchShadowArea.setInputRegion(&empty);
+    searchShadowArea.layout().setPositionType(YGPositionTypeAbsolute);
+    searchShadowArea.layout().setPosition(YGEdgeTop, 0.f);
+    searchShadowArea.layout().setPosition(YGEdgeLeft, 0.f);
+    searchShadowArea.layout().setWidthPercent(100.f);
+    searchShadowArea.layout().setHeight(AKSearchField::Height + 10.f); // The field and its bottom margin
+    searchShadow.setStrength(0.6f);
+    searchShadow.showWhileScrolled(&list);
+
     addSections();
 
 }
