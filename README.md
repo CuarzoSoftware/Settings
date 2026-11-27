@@ -20,6 +20,9 @@ settings) and the selected section's pane next to it, with back and forward navi
 - **Wi-Fi** (NetworkManager): turning Wi-Fi on and off, the network it's connected to (status,
   security, details: IP address, router, hardware address), known networks (Auto-Join, forget)
   and the other networks in range (joining them, asking for their password).
+- **Trackpad** (Crystals): tracking speed, secondary click (two fingers or the bottom right
+  corner), tap to click, natural scrolling, and the three finger swipes (between desktops, Exposé
+  and Show Desktop). Saved to `~/.config/cz-crystals/trackpad.conf`, which Crystals applies right away.
 
 The other sections show a placeholder for now.
 
