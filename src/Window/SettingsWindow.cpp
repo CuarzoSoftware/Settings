@@ -4,6 +4,7 @@
 #include <Panes/SoundPane.h>
 #include <Panes/KeyboardPane.h>
 #include <Panes/TrackpadPane.h>
+#include <Panes/MousePane.h>
 #include <Panes/PlaceholderPane.h>
 #include <CZ/AK/AKTheme.h>
 #include <CZ/Core/CZTimer.h>
@@ -85,6 +86,8 @@ Pane *SettingsWindow::pane(const std::string &id) noexcept
         pane = std::make_unique<SoundPane>();
     else if (id == "keyboard")
         pane = std::make_unique<KeyboardPane>();
+    else if (id == "mouse")
+        pane = std::make_unique<MousePane>();
     else if (id == "trackpad")
         pane = std::make_unique<TrackpadPane>();
     else if (AKSidebarItem *item { sidebar.list.item(id) })

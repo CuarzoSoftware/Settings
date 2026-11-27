@@ -20,6 +20,10 @@ settings) and the selected section's pane next to it, with back and forward navi
 - **Wi-Fi** (NetworkManager): turning Wi-Fi on and off, the network it's connected to (status,
   security, details: IP address, router, hardware address), known networks (Auto-Join, forget)
   and the other networks in range (joining them, asking for their password).
+- **Mouse** (Crystals): tracking speed, natural scrolling, double click speed and scrolling speed.
+  Saved to `~/.config/cz-crystals/mouse.conf`: Crystals applies the tracking and scrolling ones right
+  away, Cuarzo and Qt apps (with the Cuarzo platform theme) the double click speed, which GTK apps
+  get through `gsettings` (`org.gnome.desktop.peripherals.mouse double-click`).
 - **Trackpad** (Crystals): tracking speed, secondary click (two fingers or the bottom right
   corner), tap to click, natural scrolling, and the three finger swipes (between desktops, Exposé
   and Show Desktop). Saved to `~/.config/cz-crystals/trackpad.conf`, which Crystals applies right away.
